@@ -7,7 +7,7 @@ from datetime import timedelta
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'AnalysisEngine.settings')
 
 BROKER_URL = 'amqp://mqadmin:mqpwdpwd@rabbitmq'
-CELERY_RESULT_BACKEND = 'redis://old_classifier_redis:6379/0'
+CELERY_RESULT_BACKEND = 'redis://yolov7-restapi_redis:6379/0'
 
 app = Celery('AnalysisEngine', broker=BROKER_URL, backend=CELERY_RESULT_BACKEND)
 app.config_from_object('django.conf:settings', namespace='CELERY')

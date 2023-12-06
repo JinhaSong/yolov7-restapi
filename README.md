@@ -1,4 +1,4 @@
-# old_classifier
+# yolov7-restapi
 
 - [Introduce](#introduce)
 - [Prerequisites](#prerequisites)
@@ -35,7 +35,7 @@ Linux 사용을 가정하여 코드를 작성하였으며, 만약 다른 환경�
    service:
      ...
      main:
-       container_name: old_classifier_django
+       container_name: yolov7-restapi_django
        ...
        ports:
        - "8777:8000" # -> 변경
@@ -55,7 +55,7 @@ Linux 사용을 가정하여 코드를 작성하였으며, 만약 다른 환경�
 - 웹 서버가 실행된 것을 확인하였으면 Module 추가를 위해 main container에 docker attach로 접근하여 일단 웹 서버를 종료합니다.
     
     ```bash
-    docker attach old_classifier_django
+    docker attach yolov7-restapi_django
     Ctrl + C
     sh server_shutdown.sh
     ```

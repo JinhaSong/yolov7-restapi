@@ -2,7 +2,7 @@ version: '2.3'
 
 services:
   database:
-    container_name: old_classifier_database
+    container_name: yolov7-restapi_database
     image: mysql:8.0.21
     command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
     env_file:
@@ -15,7 +15,7 @@ services:
       timeout: 3s
       retries: 10
   rabbitmq:
-    container_name: old_classifier_rabbitmq
+    container_name: yolov7-restapi_rabbitmq
     image: rabbitmq:3.8-management
     restart: always
     environment:
@@ -30,7 +30,7 @@ services:
       timeout: 3s
       retries: 10
   redis:
-    container_name: old_classifier_redis
+    container_name: yolov7-restapi_redis
     image: redis:5.0-alpine
     restart: always
     expose:
@@ -40,7 +40,7 @@ services:
       timeout: 3s
       retries: 10
   main:
-    container_name: old_classifier_django
+    container_name: yolov7-restapi_django
     build:
       context: ./
       dockerfile: docker/Dockerfile
