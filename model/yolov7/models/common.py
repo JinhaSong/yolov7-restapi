@@ -12,10 +12,13 @@ from torchvision.ops import DeformConv2d
 from PIL import Image
 from torch.cuda import amp
 
-from utils.datasets import letterbox
-from utils.general import non_max_suppression, make_divisible, scale_coords, increment_path, xyxy2xywh
-from utils.plots import color_list, plot_one_box
-from utils.torch_utils import time_synchronized
+import sys
+sys.path.insert(0, '/workspace/model/yolov7/')
+
+from model.yolov7.utils.datasets import letterbox
+from model.yolov7.utils.general import non_max_suppression, make_divisible, scale_coords, increment_path, xyxy2xywh
+from model.yolov7.utils.plots import color_list, plot_one_box
+from model.yolov7.utils.torch_utils import time_synchronized
 
 
 ##### basic ####

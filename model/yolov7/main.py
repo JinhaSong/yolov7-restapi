@@ -1,31 +1,31 @@
 import os
 import sys
+import cv2
 import numpy
 import torch
-from detector.object_detection.template.main import ObjectDetection
 
-sys.path.insert(0, '/workspace/model/yolov7')
-from models.experimental import attempt_load
-from utils.general import non_max_suppression, scale_coords
-from utils.torch_utils import select_device
-from utils.datasets import letterbox
-from utils.dataset_classes import get_class
+# sys.path.insert(0, '/workspace/model/yolov7/')
+from model.yolov7.models.experimental import attempt_load
+from model.yolov7.utils.general import non_max_suppression, scale_coords
+from model.yolov7.utils.torch_utils import select_device
+from model.yolov7.utils.datasets import letterbox
+from model.yolov7.utils.dataset_classes import get_class
 
-class YOLOv7(ObjectDetection):
+class YOLOv7:
     model = None
     result = None
     conf_thresh = 0.0
     nms_thresh = 0.0
     path = os.path.dirname(os.path.abspath(__file__))
 
-    def __init__(self, params):
+    def __init__(self):
         super().__init__()
-        self.model_name  = "yolov7x"
+        self.model_name  = "yolov7-w6"
         self.dataset     = "display_fault"
-        self.conf_thresh = 0.05
+        self.conf_thresh = 0.1
         self.nms_thresh  = 0.5
-        self.is_batch    = bool(params["is_batch"])
-        self.weight_path = os.path.join(self.path, f"weights/{self.model_name}.pt")
+        self.is_batch    = True
+        self.weight_path = os.path.join(f"/workspace/model/weights/{self.model_name}.pt")
         self.image_size = 1280
         if self.is_batch:
             self.batch_size = 32
@@ -38,7 +38,31 @@ class YOLOv7(ObjectDetection):
         self.model.eval()
         self.model(torch.zeros(1, 3, self.image_size, self.image_size).to(self.device).type_as(next(self.model.parameters())))  # run once
 
-    def inference_image(self, image, score_max=100):
+    def draw_bounding_boxes(self, image, results):
+        """
+        Draw bounding boxes on the image.
+
+        :param image: Input image (numpy array).
+        :param results: Detection results from the inference method.
+        :return: Image with drawn bounding boxes.
+        """
+        for result in results:
+            label = result['label'][0]['description']
+            score = result['label'][0]['score']
+            x = int(result['position']['x'])
+            y = int(result['position']['y'])
+            w = int(result['position']['w'])
+            h = int(result['position']['h'])
+
+            # Draw rectangle
+            cv2.rectangle(image, (x, y), (x + w, y + h), (255, 0, 0), 2)
+
+            # Optionally, add label and score
+            cv2.putText(image, f"{label}: {score:.2f}", (x, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 0, 0), 2)
+
+        return image
+
+    def inference_image(self, image, score_max=1):
         """
         :param image: input image(np array)
         :return: dict format bounding box(x1, y1, x2, y2), scor, class, class index
@@ -46,6 +70,7 @@ class YOLOv7(ObjectDetection):
                 [{"label": [{"description": cls, "score": score, "class_idx": cls_idx}],
                  "position": {"x": x, "y": y, "w": w, "h": h}}, ...]
         """
+        origin_image = image.copy()
         origin_image_shape = image.copy().shape
         augment = False
         stride = int(self.model.stride.max())
@@ -92,11 +117,12 @@ class YOLOv7(ObjectDetection):
                             }
                         })
         self.results = results
+        image_with_boxes = self.draw_bounding_boxes(origin_image, results)
 
-        return results
+        return results, image_with_boxes
 
 
-    def inference_image_batch(self, images, score_max=100):
+    def inference_image_batch(self, images, score_max=1):
         """
         :param image: input images(list in dict: [np array])
         :return: detection results(bounding box(x1, y1, x2, y2), score, class, class index) of each images
@@ -119,7 +145,7 @@ class YOLOv7(ObjectDetection):
         try:
             image = torch.stack(tensor_images, 0)
         except:
-            print(tensor_images)
+            pass
         image = image.to(self.device, non_blocking=True)
         image = image.float()  # uint8 to fp16/32
         image /= 255.0  # 0 - 255 to 0.0 - 1.0
@@ -164,10 +190,14 @@ class YOLOv7(ObjectDetection):
                             })
             results.append(result)
         self.results = results
+        out_images = []
+        for image, result in zip(images, results):
+            image_with_boxes = self.draw_bounding_boxes(image, result)
+            out_images.append(image_with_boxes)
 
-        return results
+        return results, out_images
 
-    def inference(self, image, is_batch=False):
+    def inference(self, image, is_batch=True):
         if is_batch :
             return self.inference_image_batch(image)
         else:

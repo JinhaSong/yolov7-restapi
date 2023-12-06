@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import cv2
 from AnalysisEngine.config import DEBUG
 from AnalysisEngine.celerys import app
 from celery.signals import worker_init, worker_process_init
@@ -25,11 +26,12 @@ def module_load_init(**__):
     #   - Add your model
     #   - You can use worker_index if you need to get and set gpu_id
     #       - ex) gpu_id = worker_index % TOTAL_GPU_NUMBER
-    from model.MiVOLO import MiVOLOWrapper
-    analyzer = MiVOLOWrapper()
+    from model.yolov7.main import YOLOv7
+    analyzer = YOLOv7()
 
 
 @app.task(acks_late=True, queue='WebAnalyzer', routing_key='webanalyzer_tasks')
 def analyzer_by_image(file_path):
-    result, out_image = analyzer.inference(file_path)
-    return result, out_image
+    image = cv2.imread(file_path)
+    result, out_image = analyzer.inference([image])
+    return result[0], out_image[0]
