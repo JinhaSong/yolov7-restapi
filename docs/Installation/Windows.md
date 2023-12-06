@@ -16,14 +16,14 @@
     wsl --status
     ```    
 
-      ![image-20231014-130553](https://github.com/JinhaSong/yolov7-restapi/docs/installation/1.png)
+      ![](https://github.com/JinhaSong/yolov7-restapi/blob/main/docs/Installation/1.png)
 
 
 ## 2\. start WSL2
 
 ### 검색 창에서 ubuntu 검색 후 해당 아이콘 실행
 
-![image-20231014-130615](https://github.com/JinhaSong/yolov7-restapi/docs/installation/2.png)
+![image-20231014-130615](https://github.com/JinhaSong/yolov7-restapi/blob/main/docs/Installation/2.png)
 
 
 ## 3\. Install CUDA for WSL2
@@ -47,9 +47,11 @@
 *   ```sudo sh cuda_12.2.2_535.104.05_linux.run``` 커맨드 입력 시 아래와 같이 진행
     
 
-      ![image-20231014-132501](https://github.com/JinhaSong/yolov7-restapi/docs/installation/3.png)
+      ![image-20231014-132501](https://github.com/JinhaSong/yolov7-restapi/blob/main/docs/Installation/3.png)
 *   accept 입력 후 enter
-      ![image-20231014-132541](https://github.com/JinhaSong/yolov7-restapi/docs/installation/4.png)
+
+![image-20231014-132541](https://github.com/JinhaSong/yolov7-restapi/blob/main/docs/Installation/4.png)
+
 *   CUDA Toolkit 12.2 만 체크 후 Install에서 Enter
 *   체크는 spacebar로 해제 가능
 
