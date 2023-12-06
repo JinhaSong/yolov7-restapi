@@ -1,4 +1,4 @@
-FROM nvidia/cuda:11.7.1-cudnn8-devel-ubuntu20.04
+FROM sogangmm/worker-engine:cuda11.6
 
 ENV TZ Asia/Seoul
 ENV LC_ALL=C.UTF-8
