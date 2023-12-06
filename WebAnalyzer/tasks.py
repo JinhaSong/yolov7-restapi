@@ -33,5 +33,6 @@ def module_load_init(**__):
 @app.task(acks_late=True, queue='WebAnalyzer', routing_key='webanalyzer_tasks')
 def analyzer_by_image(file_path):
     image = cv2.imread(file_path)
+    image = cv2.resize(image, (1280, 1280), interpolation=cv2.INTER_AREA)
     result, out_image = analyzer.inference([image])
     return result[0], out_image[0]

@@ -38,7 +38,7 @@ class ImageModel(models.Model):
 
         buffer = BytesIO()
         img.save(buffer, format='PNG')
-        new_file_name = os.path.basename(self.image.name).replace(".jpg", "_result.png")
+        new_file_name = os.path.basename(self.image.name).split(".")[0] + "_result.png"
         file_len = buffer.tell()
         buffer.seek(0)
 
